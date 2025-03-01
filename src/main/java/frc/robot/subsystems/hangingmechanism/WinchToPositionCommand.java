@@ -8,11 +8,6 @@ public class WinchToPositionCommand extends Command {
     private double targetPosition;
     private Timer timer = new Timer();
 
-    public WinchToPositionCommand(HangingSubsystem hangingSubsystem, HangingSubsystem.WinchPosition targetPosition) {
-        this.hangingSubsystem = hangingSubsystem;
-        this.targetPosition = targetPosition.value;
-    }
-
     public WinchToPositionCommand(HangingSubsystem hangingSubsystem, double targetPosition) {
         this.hangingSubsystem = hangingSubsystem;
         this.targetPosition = targetPosition;
@@ -27,6 +22,6 @@ public class WinchToPositionCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return (Math.abs(hangingSubsystem.getWinchPosition() - targetPosition) < 10.0)||timer.hasElapsed(5);
+        return (Math.abs(hangingSubsystem.getWinchPosition() - targetPosition) < 10.0)||timer.hasElapsed(2);
     }
 }

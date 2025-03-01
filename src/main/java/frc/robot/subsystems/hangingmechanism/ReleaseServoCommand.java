@@ -3,27 +3,32 @@ package frc.robot.subsystems.hangingmechanism;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class WinchManualTestingCommand extends Command {
+public class ReleaseServoCommand extends Command {
     private HangingSubsystem hangingSubsystem;
-    private double targetPosition;
+    private boolean release;
     private Timer timer = new Timer();
 
-    public WinchManualTestingCommand(HangingSubsystem hangingSubsystem, double speed) {
+    public ReleaseServoCommand(boolean release,HangingSubsystem hangingSubsystem) {
         this.hangingSubsystem = hangingSubsystem;
-        targetPosition = speed;
+        this.release = release;
+        addRequirements(hangingSubsystem);
     }
 
-   
 
     @Override
     public void initialize() {
-        hangingSubsystem.setWinchPosition(targetPosition);
+        if (release){
+            hangingSubsystem.releaseServo();
+        }else{
+            hangingSubsystem.latchServo();
+        }
+        
         timer.reset();
         timer.start();
     }
 
     @Override
     public boolean isFinished() {
-        return (Math.abs(hangingSubsystem.getWinchPosition() - targetPosition) < 10.0)||timer.hasElapsed(5);
+        return timer.hasElapsed(1.0);
     }
 }

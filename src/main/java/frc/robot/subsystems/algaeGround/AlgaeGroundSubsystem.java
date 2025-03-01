@@ -127,8 +127,9 @@ public class AlgaeGroundSubsystem extends SubsystemBase {
   }
   public SequentialCommandGroup stopIntakeSequenceCommand(){
     return new SequentialCommandGroup(
-      new AlgaeToPosCommand(DRIVE_POSITION,this),
-      holdCommand()
+      holdCommand(),
+      new AlgaeToPosCommand(DRIVE_POSITION,this)
+      
     );
   }
   

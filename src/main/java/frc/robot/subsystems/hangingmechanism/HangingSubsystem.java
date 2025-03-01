@@ -26,29 +26,13 @@ public class HangingSubsystem extends SubsystemBase{
     private RelativeEncoder winchEncoder = winchMotor.getEncoder();
 
     //Release Servo
-    private Servo releaseServo = new Servo(1); //Check value
+    private Servo servo = new Servo(1); //Check value
 
-    public enum ReleaseServoPosition {
-        LATCHED(1),
-        FREE(0.5);
+    private double servoReleasePosition = 0.5;
+    private double servoLatchedPosition = 1;
 
-        double value;
-
-        private ReleaseServoPosition(double value) {
-            this.value = value;
-        }
-    }
-
-    public enum WinchPosition {
-        RETRACTED(0),
-        EXTENDED(690);
-
-        double value;
-
-        private WinchPosition(double value) {
-            this.value = value;
-        }
-    }
+    private double winchExtendedPosition = 690;
+    private double winchRetractedPosition = 0;
 
     public HangingSubsystem() {
         winchConfig.encoder.positionConversionFactor(1)
@@ -62,23 +46,27 @@ public class HangingSubsystem extends SubsystemBase{
         .p(0.1).i(0.0).d(0.0)
         .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
 
-
         winchMotor.configure(winchConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         //winchController.setReference(0, SparkMax.ControlType.kPosition);
 
-        setReleaseServoPosition(ReleaseServoPosition.FREE);
+        servo.setPosition(servoReleasePosition);
     }
 
-    public void setReleaseServoPosition(ReleaseServoPosition position) {
-        releaseServo.set(position.value);
+    protected void latchServo(){
+        servo.setPosition(servoLatchedPosition);
+    }
+    protected void releaseServo(){
+        servo.setPosition(servoReleasePosition);
     }
 
-    public void setWinchPosition(double position) {
+    protected void retractWinch() {
+        winchController.setReference(winchRetractedPosition, ControlType.kPosition);
+    }
+    protected void extendWinch() {
+        winchController.setReference(winchExtendedPosition, ControlType.kPosition);
+    }
+    protected void setWinchPosition(double position) {
         winchController.setReference(position, ControlType.kPosition);
-    }
-
-    public void setWinchPosition(WinchPosition position) {
-        setWinchPosition(position.value);
     }
 
     //Getters
@@ -91,23 +79,23 @@ public class HangingSubsystem extends SubsystemBase{
 
     public SequentialCommandGroup extendHangingMechanismCommand() {
         return new SequentialCommandGroup(
-            servoReleaseCommand(),
+            new ReleaseServoCommand(true,this),
             new WinchToPositionCommand(this, -18),
-            new WinchToPositionCommand(this, WinchPosition.EXTENDED)
+            new WinchToPositionCommand(this, winchExtendedPosition)
         );
     }
 
     public SequentialCommandGroup retractHangingMechanismCommand() {
         return new SequentialCommandGroup(
-            servoLatchCommand(),
-            new WinchToPositionCommand(this, WinchPosition.RETRACTED)  
+            new ReleaseServoCommand(false,this),
+            new WinchToPositionCommand(this, winchRetractedPosition)  
         );
     }
 
     public Command manualRetractCommand() {
         return Commands.runOnce(() -> {
             winchController.setReference(-5, ControlType.kVoltage);
-            setReleaseServoPosition(ReleaseServoPosition.LATCHED);
+            latchServo();
         });    
     }
 
@@ -115,14 +103,8 @@ public class HangingSubsystem extends SubsystemBase{
         return Commands.runOnce(() -> {
             winchController.setReference(0, ControlType.kVoltage);
             winchMotor.getEncoder().setPosition(0);
+            latchServo();
         });
     }
 
-    public Command servoReleaseCommand() {
-        return Commands.runOnce(() -> setReleaseServoPosition(ReleaseServoPosition.FREE));    
-    }
-
-    public Command servoLatchCommand() {
-        return Commands.runOnce(() -> setReleaseServoPosition(ReleaseServoPosition.LATCHED));    
-    }
 }
