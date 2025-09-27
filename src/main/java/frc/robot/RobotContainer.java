@@ -61,8 +61,8 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public LimelightSubsystem limelightSubsystem; 
     public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-    public final AlgaeGroundSubsystem algaeGroundSubsystem = new AlgaeGroundSubsystem();
-    public final HangingSubsystem hangingSubsystem = new HangingSubsystem();
+    // public final AlgaeGroundSubsystem algaeGroundSubsystem = new AlgaeGroundSubsystem();
+    // public final HangingSubsystem hangingSubsystem = new HangingSubsystem();
     public final CoralDoorSubsystem coralDoorSubsystem = new CoralDoorSubsystem();
 
     /* Path follower */
@@ -114,15 +114,15 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // Algae Ground Testing Controls
-        joystick.rightBumper().onFalse(algaeGroundSubsystem.stopIntakeSequenceCommand())
-            .onTrue(algaeGroundSubsystem.intakeSequenceCommand());
-        //joystick.a().onTrue(algaeGroundSubsystem.intakeUntilStalledCommand())
-            //.onFalse(algaeGroundSubsystem.holdCommand());
-        joystick.leftBumper().onTrue(algaeGroundSubsystem.outtakeCommand())
-            .onFalse(algaeGroundSubsystem.holdCommand());
-        joystick.povDown().onTrue(new AlgaeToPosCommand(algaeGroundSubsystem.PROCESSOR_POSIITON, algaeGroundSubsystem))
-            .onFalse(new AlgaeToPosCommand(algaeGroundSubsystem.DRIVE_POSITION, algaeGroundSubsystem));
+        // // Algae Ground Testing Controls
+        // joystick.rightBumper().onFalse(algaeGroundSubsystem.stopIntakeSequenceCommand())
+        //     .onTrue(algaeGroundSubsystem.intakeSequenceCommand());
+        // //joystick.a().onTrue(algaeGroundSubsystem.intakeUntilStalledCommand())
+        //     //.onFalse(algaeGroundSubsystem.holdCommand());
+        // joystick.leftBumper().onTrue(algaeGroundSubsystem.outtakeCommand())
+        //     .onFalse(algaeGroundSubsystem.holdCommand());
+        // joystick.povDown().onTrue(new AlgaeToPosCommand(algaeGroundSubsystem.PROCESSOR_POSIITON, algaeGroundSubsystem))
+        //     .onFalse(new AlgaeToPosCommand(algaeGroundSubsystem.DRIVE_POSITION, algaeGroundSubsystem));
         
 
 
@@ -134,12 +134,12 @@ public class RobotContainer {
 
          //Hang Testing Controls
 
-         joystick.povUp().onTrue(hangingSubsystem.manualRetractCommand())
-         .onFalse(hangingSubsystem.stopandZeroMotorCommand());
-         joystick.povLeft().onTrue(hangingSubsystem.retractHangingMechanismCommand());
-         joystick.povRight().onTrue(hangingSubsystem.extendHangingMechanismCommand());
+        //  joystick.povUp().onTrue(hangingSubsystem.manualRetractCommand())
+        //  .onFalse(hangingSubsystem.stopandZeroMotorCommand());
+        //  joystick.povLeft().onTrue(hangingSubsystem.retractHangingMechanismCommand());
+        //  joystick.povRight().onTrue(hangingSubsystem.extendHangingMechanismCommand());
 
-         joystick.leftTrigger(0.5).onTrue(new CoralDoorToPositionCommand(CoralDoorSubsystem.DoorPosition.OPEN, coralDoorSubsystem))
+         joystick.povUp().onTrue(new CoralDoorToPositionCommand(CoralDoorSubsystem.DoorPosition.OPEN, coralDoorSubsystem))
          .onFalse(new CoralDoorToPositionCommand(CoralDoorSubsystem.DoorPosition.CLOSED, coralDoorSubsystem));
 
 
@@ -154,9 +154,9 @@ public class RobotContainer {
     }
     private void registerCommands(){
         //register the commands here
-        NamedCommands.registerCommand("ElevatorHomingCommand", new ElevatorHomingCommand(elevatorSubsystem));
-        NamedCommands.registerCommand("AlgaeToDrivePos", new AlgaeToPosCommand(AlgaeGroundSubsystem.DRIVE_POSITION, algaeGroundSubsystem));
-        NamedCommands.registerCommand("AlgaeToIntakePos", new AlgaeToPosCommand(AlgaeGroundSubsystem.INTAKE_POSITION, algaeGroundSubsystem));
+        // NamedCommands.registerCommand("ElevatorHomingCommand", new ElevatorHomingCommand(elevatorSubsystem));
+        // NamedCommands.registerCommand("AlgaeToDrivePos", new AlgaeToPosCommand(AlgaeGroundSubsystem.DRIVE_POSITION, algaeGroundSubsystem));
+        // NamedCommands.registerCommand("AlgaeToIntakePos", new AlgaeToPosCommand(AlgaeGroundSubsystem.INTAKE_POSITION, algaeGroundSubsystem));
         NamedCommands.registerCommand("ElevatorToLVL1", new ElevatorToPosCommand(ElevatorSubsystem.level1Position, elevatorSubsystem));
         NamedCommands.registerCommand("ElevatorToLVL2", new ElevatorToPosCommand(ElevatorSubsystem.level2Position, elevatorSubsystem));
         NamedCommands.registerCommand("ElevatorToLVL3", new ElevatorToPosCommand(ElevatorSubsystem.level3Position, elevatorSubsystem));

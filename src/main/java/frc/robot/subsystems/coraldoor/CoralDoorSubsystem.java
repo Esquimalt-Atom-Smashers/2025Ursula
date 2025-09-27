@@ -24,6 +24,7 @@ public class CoralDoorSubsystem extends SubsystemBase{
 
     public CoralDoorSubsystem() {
         coralServo = new Servo(0); //Check this value later
+        coralServo.set(DoorPosition.CLOSED.value);
     }
 
     public void setPosition(DoorPosition position) {
