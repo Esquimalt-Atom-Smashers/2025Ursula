@@ -57,7 +57,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     elevatorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .p(0.1).i(0.00000).d(0.0000)
-    .outputRange(-.2, .6, ClosedLoopSlot.kSlot0);
+    .outputRange(-.2, .6, ClosedLoopSlot.kSlot0)
+    .outputRange(-.6,.6,ClosedLoopSlot.kSlot1).p(0.1,ClosedLoopSlot.kSlot1);
     // Set PID values for velocity control in slot 1
         // .p(0.0001, ClosedLoopSlot.kSlot1)
         // .i(0, ClosedLoopSlot.kSlot1)
@@ -88,18 +89,40 @@ public class ElevatorSubsystem extends SubsystemBase {
       timer.reset();
     }
   }
-  public void setTargetPosition(double targetPosition){
-    elevatorClosedLoopController.setReference(targetPosition, ControlType.kPosition);
+  // public void setTargetPosition(double targetPosition){
+  //   elevatorClosedLoopController.setReference(targetPosition, ControlType.kPosition);
     
-    //elevatorClosedLoopController.setReference(targetPosition, ControlType.kMAXMotionPositionControl,
-    //ClosedLoopSlot.kSlot0);
+  //   //elevatorClosedLoopController.setReference(targetPosition, ControlType.kMAXMotionPositionControl,
+  //   //ClosedLoopSlot.kSlot0);
 
 
-  }
+  // }
   
   public void isCompetitionRobot(boolean isCompetitionRobot){
     this.isCompetitionRobot = isCompetitionRobot;
     elevatorConfig.inverted(!isCompetitionRobot);
   }
+
+
+
+public double getPosition() {
+  return elevatorEncoder.getPosition();
+}
+
+
+
+
+protected void setTargetPosition(double targetPosition){
+  setTargetPosition(targetPosition,0);
+}
+
+protected void setTargetPosition(double targetPosition, double FFVoltage){
+  if(targetPosition>12.5){
+    elevatorClosedLoopController.setReference(targetPosition, ControlType.kPosition, ClosedLoopSlot.kSlot1, FFVoltage);
+  } else{
+    elevatorClosedLoopController.setReference(targetPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0, FFVoltage);
+  }
+}
+
 
 }
